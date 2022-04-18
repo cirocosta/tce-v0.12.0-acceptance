@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: default
+secrets:
+- name: registry-credentials
+imagePullSecrets:
+- name: registry-credentials
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ootb-supply-chain-source-to-url-workload
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ootb-supply-chain-source-to-url-workload
+subjects:
+- kind: ServiceAccount
+  name: default
+---
+
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: hello-world
+  name: hello-world
+  namespace: default
+spec:
+  source:
+    git:
+      ref:
+        branch: main
+      url: https://github.com/sample-accelerators/tanzu-java-web-app
