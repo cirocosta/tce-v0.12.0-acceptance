@@ -1,4 +1,4 @@
-all: cert-manager secretgen-controller kpack kpack-dependencies cartographer cartographer-catalog fluxcd-source-controller
+all: cert-manager secretgen-controller kpack kpack-dependencies cartographer cartographer-catalog fluxcd-source-controller knative-serving
 
 
 cert-manager:
@@ -41,6 +41,7 @@ fluxcd-source-controller:
 		--version 0.21.2
 
 knative-serving:
-	tanzu package install $@ \
-		--package-name $@.community.tanzu.vmware.com \
-		--version 1.0.0
+	kapp deploy --yes \
+		-a $@ \
+		-f https://github.com/knative/serving/releases/download/knative-v1.3.0/serving-core.yaml \
+		-f https://github.com/knative/serving/releases/download/knative-v1.3.0/serving-crds.yaml
